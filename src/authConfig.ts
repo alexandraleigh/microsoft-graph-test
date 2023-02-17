@@ -1,20 +1,11 @@
 import { LogLevel, PublicClientApplication } from '@azure/msal-browser'
 
-console.log(
-  'import.meta.env.VITE_MS_CLIENT_ID---',
-  import.meta.env.VITE_MS_CLIENT_ID,
-)
-console.log(
-  'import.meta.env.VITE_MS_TENANT_ID---',
-  import.meta.env.VITE_MS_TENANT_ID,
-)
-
 // Config object to be passed to Msal on creation
 export const msalConfig = {
   auth: {
-    clientId: import.meta.env.VITE_MS_CLIENT_ID,
+    clientId: import.meta.env.MS_CLIENT_ID,
     authority:
-      'https://login.microsoftonline.com/' + import.meta.env.VITE_MS_TENANT_ID,
+      'https://login.microsoftonline.com/' + import.meta.env.MS_TENANT_ID,
     redirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
     postLogoutRedirectUri: '/', // Must be registered as a SPA redirectURI on your app registration
   },
