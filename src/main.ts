@@ -3,10 +3,11 @@ import App from './App.vue';
 import router from './router/router';
 import ElementPlus from 'element-plus';
 import 'element-plus/dist/index.css';
-import { msalPlugin } from "./plugins/msalPlugin";
-import { msalInstance } from "./authConfig";
-import { AuthenticationResult, EventType } from "@azure/msal-browser";
-import { CustomNavigationClient } from "./router/NavigationClient";
+import { msalPlugin } from './plugins/msalPlugin';
+import { msalInstance } from './authConfig';
+import axiosPlugin from './plugins/axios';
+import { AuthenticationResult, EventType } from '@azure/msal-browser';
+import { CustomNavigationClient } from './router/NavigationClient';
 
 // The next 2 lines are optional. This is how you configure MSAL to take advantage of the router's navigate functions when MSAL redirects between pages in your app
 const navigationClient = new CustomNavigationClient(router);
@@ -15,7 +16,7 @@ msalInstance.setNavigationClient(navigationClient);
 // Account selection logic is app dependent. Adjust as needed for different use cases.
 const accounts = msalInstance.getAllAccounts();
 if (accounts.length > 0) {
-    msalInstance.setActiveAccount(accounts[0]);
+  msalInstance.setActiveAccount(accounts[0]);
 }
 msalInstance.addEventCallback((event) => {
   if (event.eventType === EventType.LOGIN_SUCCESS && event.payload) {
@@ -27,9 +28,14 @@ msalInstance.addEventCallback((event) => {
 
 const app = createApp(App);
 
+// devtools https://stackoverflow.com/questions/63628677/how-to-enable-devtools-in-vue-3-with-typescipt-in-development-mode
+const isDev = process.env.NODE_ENV !== 'production';
+app.config.performance = isDev;
+
 app.use(ElementPlus);
 app.use(router);
 app.use(msalPlugin, msalInstance);
+app.use(axiosPlugin);
 router.isReady().then(() => {
   // Waiting for the router to be ready prevents race conditions when returning from a loginRedirect or acquireTokenRedirect
   app.mount('#app');

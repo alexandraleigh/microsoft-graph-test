@@ -1,33 +1,31 @@
-import { RouteLocationNormalized, Router } from 'vue-router'
-import { msalInstance, loginRequest } from '../authConfig'
+import { RouteLocationNormalized, Router } from 'vue-router';
+import { msalInstance, loginRequest } from '../authConfig';
 import {
   InteractionType,
   PopupRequest,
   PublicClientApplication,
   RedirectRequest,
-} from '@azure/msal-browser'
+} from '@azure/msal-browser';
 
 export function registerGuard(router: Router) {
   router.beforeEach(
     async (to: RouteLocationNormalized, from: RouteLocationNormalized) => {
-      console.log('to.meta.requiresAuth---', to.meta.requiresAuth)
-
       if (to.meta.requiresAuth) {
         const request = {
           ...loginRequest,
           redirectStartPage: to.fullPath,
-        }
+        };
         const shouldProceed = await isAuthenticated(
           msalInstance,
           InteractionType.Redirect,
           request,
-        )
-        return shouldProceed || '/failed'
+        );
+        return shouldProceed || '/failed';
       }
 
-      return true
+      return true;
     },
-  )
+  );
 }
 
 export async function isAuthenticated(
@@ -39,9 +37,9 @@ export async function isAuthenticated(
   return instance
     .handleRedirectPromise()
     .then(() => {
-      const accounts = instance.getAllAccounts()
+      const accounts = instance.getAllAccounts();
       if (accounts.length > 0) {
-        return true
+        return true;
       }
 
       // User is not signed in and attempting to access protected route. Sign them in.
@@ -49,25 +47,25 @@ export async function isAuthenticated(
         return instance
           .loginPopup(loginRequest)
           .then(() => {
-            return true
+            return true;
           })
           .catch(() => {
-            return false
-          })
+            return false;
+          });
       } else if (interactionType === InteractionType.Redirect) {
         return instance
           .loginRedirect(loginRequest)
           .then(() => {
-            return true
+            return true;
           })
           .catch(() => {
-            return false
-          })
+            return false;
+          });
       }
 
-      return false
+      return false;
     })
     .catch(() => {
-      return false
-    })
+      return false;
+    });
 }
