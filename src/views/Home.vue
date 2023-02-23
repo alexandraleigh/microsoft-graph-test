@@ -1,7 +1,11 @@
 <template>
   <div class="home">
     <span v-if="!isAuthenticated">Please sign-in to see your profile information.</span>
-    <el-button v-else type="primary" v-on:click="goToProfile">Request Profile Information</el-button>
+
+    <div v-else>
+      <el-button type="primary" @click="goTo('profile')">Request Profile Information</el-button>
+      <el-button type="primary" @click="goTo('drive-files')">Request Drive Files</el-button>
+    </div>
   </div>
 </template>
 
@@ -13,7 +17,7 @@ const isAuthenticated = useIsAuthenticated();
 
 const router = useRouter();
 
-function goToProfile() {
-  router.push("/profile");
+function goTo(page) {
+  router.push(`/${page}`);
 }
 </script>

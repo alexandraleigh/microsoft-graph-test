@@ -15,7 +15,7 @@ export function useMsGraph() {
     }
   }
 
-  async function getGraphDriveItems() {
+  async function getDriveFiles() {
     try {
       const { data } = await axios.get(`${baseUrl}/drive/root/children`);
       return data;
@@ -24,7 +24,7 @@ export function useMsGraph() {
     }
   }
 
-  async function getGraphExcel(id: string) {
+  async function getExcel(id: string) {
     try {
       const { data } = await axios.get(
         `${baseUrl}/drive/items/${id}/workbook/worksheets`,
@@ -35,15 +35,36 @@ export function useMsGraph() {
     }
   }
 
-  async function postGraphExcelRow() {
+  async function getTables(id: string, worksheetID: string) {
     try {
-      const payload = {
-        values: [['alex darrow', '123', 'adarrow@tenant.onmicrosoft.com']],
-      };
+      const { data } = await axios.get(
+        `${baseUrl}/drive/items/${id}/workbook/worksheets/${worksheetID}/tables`,
+      );
+      return data;
+    } catch (error) {
+      console.log('Error getting tables: ', error);
+    }
+  }
 
+  async function getColumns(fileID: string, worksheetID: string, tableID: string) {
+    try {
+      const { data } = await axios.get(
+        `${baseUrl}/drive/items/${fileID}/workbook/worksheets/${worksheetID}/tables/${tableID}/columns`,
+      );
+      return data;
+    } catch (error) {
+      console.log('Error getting worksheets: ', error);
+    }
+  }
+
+  async function postRow(fileID: string, worksheetID: string, tableID: string, payload: object) {
+    try {
+      const payloadObj = {
+        values: [payload],
+      };
       const { data } = await axios.post(
-        `${baseUrl}/drive/items/01K6AWNMKR4C6YCVVJHZG3ZTWJVJDXQCN6/workbook/worksheets/Sheet1/tables/Table1/rows`,
-        payload,
+        `${baseUrl}/drive/items/${fileID}/workbook/worksheets/${worksheetID}/tables/${tableID}/rows`,
+        payloadObj,
       );
 
       return data;
@@ -54,8 +75,10 @@ export function useMsGraph() {
 
   return {
     getGraphProfile,
-    getGraphDriveItems,
-    getGraphExcel,
-    postGraphExcelRow,
+    getDriveFiles,
+    getExcel,
+    getTables,
+    getColumns,
+    postRow,
   };
 }

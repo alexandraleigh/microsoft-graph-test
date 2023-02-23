@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 import Home from '../views/Home.vue';
 import Profile from '../views/Profile.vue';
+import DriveFiles from '../views/DriveFiles.vue';
 import ProfileNoGuard from '../views/ProfileNoGuard.vue';
 import Failed from "../views/Failed.vue";
 import { registerGuard } from "./Guard";
@@ -15,6 +16,14 @@ const routes: Array<RouteRecordRaw> = [
     path: '/profile',
     name: 'Profile',
     component: Profile,
+    meta: {
+        requiresAuth: true
+    }
+  },
+  {
+    path: '/drive-files',
+    name: 'DriveFiles',
+    component: DriveFiles,
     meta: {
         requiresAuth: true
     }
