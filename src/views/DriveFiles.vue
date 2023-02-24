@@ -60,47 +60,55 @@ watch(selectedSheet, (currentVal, oldVal) => {
   getTable(selectedFile.value, selectedSheet.value);
 });
 
-watch(columnValues, (currentVal, oldVal) => {
-  console.log(currentVal)
-});
-
 onMounted(async () => {
   files.value = await getDriveFiles();
 });
+
 
 async function getFile(id: string) {
   worksheets.value = await getExcel(id);
 }
 
-async function getTable(fileID: string, worksheetID: string) {
+async function getTable(
+  fileID: string,
+  worksheetID: string
+) {
   // getTable pass in fileID, worksheetID
   let res = await getTables(fileID, worksheetID);
   tables.value = res;
 
   if (!res.value.length) return
-  getFields(selectedFile.value, selectedSheet.value, res.value[0].id);
+  getFields(
+    selectedFile.value,
+    selectedSheet.value,
+    res.value[0].id
+  );
 }
 
-async function getFields(fileID: string, worksheetID: string, tableID: string) {
+async function getFields(
+  fileID: string,
+  worksheetID: string,
+  tableID: string
+) {
   // getColumns pass in fileID, worksheetID, tableID
   const res = await getColumns(fileID, worksheetID, tableID);
   columns.value = res;
 
   // add empty object properties for field values
-  res.value.forEach(field => {
+  res.value.forEach((field: Object) => {
     columnValues.value[field.name] = '';
   });
 }
 
 async function submit() {
-  const rawLabelObj = toRaw(columns.value.value);
-  const labelsInOrder = rawLabelObj.map(c => c.name);
+  const rawLabelObj: Array<object> = toRaw(columns.value.value);
+  const labelsInOrder: Array<string> = rawLabelObj.map((c: Object) => c.name);
 
-  const rawValueObj = toRaw(columnValues.value);
-  const valuesInOrder = labelsInOrder.map(v => rawValueObj[v]);
+  const rawValueObj: Object = toRaw(columnValues.value);
+  const valuesInOrder: Array<string> = labelsInOrder.map((v: string) => rawValueObj[v]);
 
-  const payload = valuesInOrder;
-  const rawTableID = toRaw(tables.value.value)[0].id;
+  const payload: Array<string> = valuesInOrder;
+  const rawTableID: string = toRaw(tables.value.value)[0].id;
 
   const res = await postRow(
     selectedFile.value,
